@@ -1,9 +1,17 @@
 class Usuario:
     def __init__(self, nome, email, senha, tipo_perfil):
-        self.__nome = nome
-        self.__email = email
-        self.__senha = senha
-        self.__tipo_perfil = tipo_perfil 
+        # 1. Definimos valores padrão seguros primeiro. 
+        # Assim, se a validação falhar, o sistema não quebra e o objeto ganha um valor "reserva".
+        self.__nome = "Indefinido"
+        self.__email = "indefinido@email.com"
+        self.__senha = "000000"
+        self.__tipo_perfil = "Estudante" 
+        
+        # 2. Chamamos os setters para aplicar os valores passando por todas as regras
+        self.setNome(nome)
+        self.setEmail(email)
+        self.setSenha(senha)
+        self.setTipoPerfil(tipo_perfil)
 
     # ==============================
     # GETTERS (Métodos de Leitura)
@@ -24,27 +32,28 @@ class Usuario:
     # SETTERS (Métodos de Modificação e Validação)
     # ==============================
     def setNome(self, novo_nome):
-        # Nome precisa ter pelo menos 3 letras e não ser apenas espaços
+        # Remove espaços em branco nas pontas e verifica se tem mais de 2 letras
         if len(novo_nome.strip()) > 2:
             self.__nome = novo_nome.strip()
         else:
             print("Erro: O nome deve ter mais de 2 caracteres válidos.")
 
     def setEmail(self, novo_email):
-        # Validação mais rigorosa: Exige '@', '.' e proíbe espaços em branco
+        # Exige '@', '.' e proíbe espaços em branco. Salva tudo em minúsculo.
         if "@" in novo_email and "." in novo_email and " " not in novo_email:
-            self.__email = novo_email.lower() # Opcional: já guarda o email em minúsculas
+            self.__email = novo_email.lower()
         else:
             print("Erro: E-mail inválido. Deve conter '@', '.' e não ter espaços.")
 
     def setSenha(self, nova_senha):
-        # Exige entre 6 e 15 caracteres e impede senhas com espaços
+        # Exige entre 6 e 15 caracteres e não permite espaços
         if 6 <= len(nova_senha) <= 15 and " " not in nova_senha:
             self.__senha = nova_senha
         else:
             print("Erro: A senha deve ter entre 6 e 15 caracteres e não conter espaços.")
 
     def setTipoPerfil(self, novo_tipo):
+        # Aceita apenas os perfis principais do escopo do projeto
         tipos_permitidos = ["Estudante", "Professor"]
         if novo_tipo in tipos_permitidos:
             self.__tipo_perfil = novo_tipo
@@ -55,6 +64,10 @@ class Usuario:
     # MÉTODOS DE NEGÓCIO
     # ==============================
     def validarLogin(self, email_digitado, senha_digitada):
+        """
+        Retorna True se o email e a senha baterem. 
+        Útil para a Funcionalidade 2 (Login).
+        """
         return self.__email == email_digitado and self.__senha == senha_digitada
 
     def imprimeInfo(self):
