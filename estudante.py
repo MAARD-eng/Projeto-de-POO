@@ -1,3 +1,5 @@
+from usuario import Usuario
+
 class Estudante:
   def __init__(self, nome, email, senha, matricula, curso):
     Usuario.__init__(self, nome, email, senha)
