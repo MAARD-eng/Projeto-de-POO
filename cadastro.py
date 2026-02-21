@@ -1,6 +1,6 @@
 import justpy as jp
-from Estudante import Estudante
-from Professor import Professor
+from estudante import Estudante
+from professor import Professor
 
 # ==========================================
 # LÓGICA DE BACKEND (O que acontece ao clicar)
