@@ -10,4 +10,3 @@ class Estudante(Usuario):
         
     def setCurso(self, novo_curso):
         self.__curso = novo_curso
- 
