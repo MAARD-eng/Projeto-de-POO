@@ -1,8 +1,8 @@
 from usuario import Usuario
 
 class Professor(Usuario):
-    def __init__(self, nome, email, senha, matricula, graduacao):
-        super().__init__(nome, email, senha, matricula)
+    def __init__(self, nome, email, senha, telefone, matricula, graduacao):
+        super().__init__(nome, email, senha, telefone, matricula)
         self.__graduacao = graduacao
 
     def getGraduacao(self): 
