@@ -1,12 +1,12 @@
 from usuario import Usuario
 
 class Professor(Usuario):
-    def __init__(self, nome, email, senha, matricula, departamento):
+    def __init__(self, nome, email, senha, matricula, graduacao):
         super().__init__(nome, email, senha, matricula)
-        self.__departamento = departamento 
+        self.__graduacao = graduacao
 
-    def getDepartamento(self): 
-        return self.__departamento
+    def getGraduacao(self): 
+        return self.__graduacao
     
-    def setDepartamento(self, novo_departamento):
-        self.__departamento = novo_departamento
+    def setGraduacao(self, nova_graduacao):
+        self.__graduacao = nova_graduacao
