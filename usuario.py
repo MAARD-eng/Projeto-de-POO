@@ -1,9 +1,10 @@
 class Usuario:
-    def __init__(self, nome, email, senha, matricula):
+    def __init__(self, nome, email, senha, telefone, matricula):
         self.__nome = nome
         self.__email = email
         self.__senha = senha
-        self.__matricula = matricula 
+        self.__matricula = matricula
+        self.__telefone = telefone
 
     def getNome(self):
         return self.__nome
@@ -14,8 +15,12 @@ class Usuario:
     def getSenha(self):
         return self.__senha
 
+    def getTelefone(self):
+        return self.__telefone
+    
     def getMatricula(self):
         return self.__matricula
+    
 
 
     def setNome(self, novo_nome):
@@ -27,7 +32,8 @@ class Usuario:
     def setSenha(self, nova_senha):
         self.__senha = nova_senha
 
+    def setTelefone(self, novo_telefone):
+        self.__telefone = novo_telefone
+    
     def setMatricula(self, nova_matricula):
         self.__matricula = nova_matricula
-
-        
