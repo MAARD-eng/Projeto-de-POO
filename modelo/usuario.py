@@ -48,8 +48,8 @@ class Usuario:
     
     def __str__(self):
         return (
-            f"Matricula: {self.getMatricula}\n"
-            f"Nome: {self.getNome}\n"
-            f"Email: {self.getEmail}\n"
-            f"Telefone: {self.getTelefone}\n"
+            f"Matricula: {self.getMatricula()}\n"
+            f"Nome: {self.getNome()}\n"
+            f"Email: {self.getEmail()}\n"
+            f"Telefone: {self.getTelefone()}\n"
         )
