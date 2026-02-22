@@ -1,8 +1,8 @@
 from usuario import Usuario
 
 class Estudante(Usuario):
-    def __init__(self, nome, email, senha, matricula, curso):
-        super().__init__(nome, email, senha, matricula)
+    def __init__(self, nome, email, senha, telefone, matricula, curso):
+        super().__init__(nome, email, senha, telefone, matricula)
         self.__curso = curso
 
     def getCurso(self): 
@@ -10,3 +10,4 @@ class Estudante(Usuario):
         
     def setCurso(self, novo_curso):
         self.__curso = novo_curso
+ 
