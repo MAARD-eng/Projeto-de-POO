@@ -1,8 +1,8 @@
 from modelo.usuario import Usuario
 
 class Estudante(Usuario):
-    def __init__(self, nome, email, telefone, senha, matricula, curso):
-        super().__init__(nome, email, telefone, senha, matricula)
+    def __init__(self, nome, email, senha, telefone, matricula, curso):
+        super().__init__(nome, email, senha, telefone, matricula)
         self.__curso = curso
 
     def to_dict(self):
