@@ -100,7 +100,7 @@ def remover_usuario(cadastro):
 
 
 def main():
-    cadastro = Cadastro("dados.json")  # ✅ Correção 4
+    cadastro = Cadastro("dados.json")
 
     while True:
         menu()
