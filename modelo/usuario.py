@@ -1,92 +1,132 @@
 import re
 
+
 class Usuario:
-    def __init__(self, nome, email, senha, telefone, matricula):
+
+    def __init__(self, nome, email, senha, telefone, matricula=None):
+
         self.setNome(nome)
         self.setEmail(email)
         self.setSenha(senha)
         self.setTelefone(telefone)
-        self.setMatricula(matricula)
-    
-    def to_dict(self):
-        return {
-            "tipo": self.__class__.__name__,
-            "nome": self.__nome,
-            "email": self.__email,
-            "senha": self.__senha,
-            "telefone": self.__telefone,
-            "matricula": self.__matricula
-        }
 
+        # matrícula pode ser definida depois pelo Cadastro
+        self.__matricula = matricula
+
+
+    # =========================
+    # VALIDAÇÕES
+    # =========================
+
+    def validar_email(self, email):
+
+        padrao = r'^[\w\.-]+@[\w\.-]+\.\w+$'
+
+        if not re.match(padrao, email):
+            raise ValueError("Email inválido")
+
+
+    def validar_senha(self, senha):
+
+        if len(senha) < 6:
+            raise ValueError("Senha deve ter pelo menos 6 caracteres")
+
+
+    def validar_telefone(self, telefone):
+
+        padrao = r'^\d{8,15}$'
+
+        if telefone and not re.match(padrao, telefone):
+            raise ValueError("Telefone deve conter apenas números (8 a 15 dígitos)")
+
+
+    # =========================
     # GETTERS
+    # =========================
 
     def getNome(self):
         return self.__nome
 
     def getEmail(self):
         return self.__email
-        
+
     def getSenha(self):
         return self.__senha
 
     def getTelefone(self):
         return self.__telefone
-    
+
     def getMatricula(self):
         return self.__matricula
 
 
+    # =========================
     # SETTERS COM VALIDAÇÃO
+    # =========================
 
-    def setNome(self, novo_nome):
-        if len(novo_nome.strip()) < 3:
-            raise ValueError("Nome deve ter pelo menos 3 caracteres")
-        self.__nome = novo_nome
-    
+    def setNome(self, nome):
 
-    def setEmail(self, novo_email):
+        if not nome.strip():
+            raise ValueError("Nome não pode ser vazio")
 
-        padrao = r"^[\w\.-]+@[\w\.-]+\.\w+$"
-
-        if not re.match(padrao, novo_email):
-            raise ValueError("Email inválido")
-
-        self.__email = novo_email
-    
-
-    def setSenha(self, nova_senha):
-
-        if len(nova_senha) < 6:
-            raise ValueError("Senha deve ter pelo menos 6 caracteres")
-
-        if not any(char.isdigit() for char in nova_senha):
-            raise ValueError("Senha deve conter pelo menos 1 número")
-
-        self.__senha = nova_senha
+        self.__nome = nome
 
 
-    def setTelefone(self, novo_telefone):
+    def setEmail(self, email):
 
-        padrao = r"^\d{10,11}$"
+        self.validar_email(email)
 
-        if not re.match(padrao, novo_telefone):
-            raise ValueError("Telefone deve ter 10 ou 11 dígitos")
+        self.__email = email
 
-        self.__telefone = novo_telefone
-    
 
-    def setMatricula(self, nova_matricula):
+    def setSenha(self, senha):
 
-        if len(str(nova_matricula)) < 3:
-            raise ValueError("Matricula inválida")
+        self.validar_senha(senha)
 
-        self.__matricula = nova_matricula
-    
+        self.__senha = senha
+
+
+    def setTelefone(self, telefone):
+
+        self.validar_telefone(telefone)
+
+        self.__telefone = telefone
+
+
+    def setMatricula(self, matricula):
+
+        self.__matricula = matricula
+
+
+    # =========================
+    # SERIALIZAÇÃO
+    # =========================
+
+    def to_dict(self):
+
+        return {
+
+            "tipo": self.__class__.__name__,
+            "nome": self.__nome,
+            "email": self.__email,
+            "senha": self.__senha,
+            "telefone": self.__telefone,
+            "matricula": self.__matricula
+
+        }
+
+
+    # =========================
+    # STRING
+    # =========================
 
     def __str__(self):
+
         return (
-            f"Matricula: {self.getMatricula()}\n"
-            f"Nome: {self.getNome()}\n"
-            f"Email: {self.getEmail()}\n"
-            f"Telefone: {self.getTelefone()}\n"
+
+            f"Matrícula: {self.__matricula}\n"
+            f"Nome: {self.__nome}\n"
+            f"Email: {self.__email}\n"
+            f"Telefone: {self.__telefone}\n"
+
         )
