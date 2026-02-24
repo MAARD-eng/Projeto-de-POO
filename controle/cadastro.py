@@ -1,85 +1,142 @@
 import json
+import os
+
+from modelo.usuario import Usuario
 from modelo.estudante import Estudante
 from modelo.professor import Professor
 
+
 class Cadastro:
+
     def __init__(self, arquivo):
         self.__arquivo = arquivo
-        self.__usuarios = self.carregar_usuarios()
+        self.__usuarios = []
+
+        self.__carregar()
+
+
+    # =========================
+    # CARREGAR DO JSON
+    # =========================
+
+    def __carregar(self):
+
+        if not os.path.exists(self.__arquivo):
+            self.__usuarios = []
+            return
+
+        try:
+            with open(self.__arquivo, "r", encoding="utf-8") as f:
+
+                dados = json.load(f)
+
+                self.__usuarios = []
+
+                for item in dados:
+
+                    tipo = item.get("tipo")
+
+                    if tipo == "Estudante":
+
+                        usuario = Estudante(
+                            item["nome"],
+                            item["email"],
+                            item["senha"],
+                            item["telefone"],
+                            item["matricula"],
+                            item.get("curso", "")
+                        )
+
+                    elif tipo == "Professor":
+
+                        usuario = Professor(
+                            item["nome"],
+                            item["email"],
+                            item["senha"],
+                            item["telefone"],
+                            item["matricula"],
+                            item.get("titulacao", "")
+                        )
+
+                    else:
+
+                        usuario = Usuario(
+                            item["nome"],
+                            item["email"],
+                            item["senha"],
+                            item["telefone"],
+                            item["matricula"]
+                        )
+
+                    self.__usuarios.append(usuario)
+
+        except Exception:
+            self.__usuarios = []
+
+
+    # =========================
+    # SALVAR NO JSON
+    # =========================
+
+    def __salvar(self):
+
+        dados = []
+
+        for usuario in self.__usuarios:
+            dados.append(usuario.to_dict())
+
+        with open(self.__arquivo, "w", encoding="utf-8") as f:
+            json.dump(dados, f, indent=4, ensure_ascii=False)
+
+
+    # =========================
+    # INSERIR
+    # =========================
 
     def inserir(self, usuario):
-        if self.__existe_matricula(usuario.getMatricula()):
+
+        if self.buscar(usuario.getMatricula(), erro=False) is not None:
             raise ValueError("Matrícula já cadastrada.")
 
         self.__usuarios.append(usuario)
-        self.salvar()
 
-    def remover(self, matricula):
-        usuario = self.buscar(matricula)
-        self.__usuarios.remove(usuario)
-        self.salvar()
+        self.__salvar()
 
-    def buscar(self, matricula):
+
+    # =========================
+    # LISTAR
+    # =========================
+
+    def listar(self):
+
+        return self.__usuarios
+
+
+    # =========================
+    # BUSCAR
+    # =========================
+
+    def buscar(self, matricula, erro=True):
+
         for usuario in self.__usuarios:
+
             if usuario.getMatricula() == matricula:
                 return usuario
 
-        raise ValueError("Usuário não encontrado.")
+        if erro:
+            raise ValueError("Usuário não encontrado.")
 
-    def listar(self):
-        return self.__usuarios.copy()
-    
-    def salvar(self):
-        lista_dict = [usuario.to_dict() for usuario in self.__usuarios]
+        return None
 
-        with open(self.__arquivo, "w", encoding="utf-8") as f:
-            json.dump({"usuarios": lista_dict}, f, indent=4, ensure_ascii=False)
 
-    def carregar_usuarios(self):
-        try:
-            with open(self.__arquivo, "r", encoding="utf-8") as f:
-                dados = json.load(f)
+    # =========================
+    # REMOVER
+    # =========================
 
-            lista = []
+    def remover(self, matricula):
 
-            for item in dados.get("usuarios", []):
-                
-                if item["tipo"] == "Professor":
-                    usuario = Professor(
-                        item["nome"],
-                        item["email"],
-                        item["senha"],
-                        item["telefone"],
-                        item["matricula"],
-                        item["titulacao"]
-                    )
+        usuario = self.buscar(matricula)
 
-                elif item["tipo"] == "Estudante":
-                    usuario = Estudante(
-                        item["nome"],
-                        item["email"],
-                        item["senha"],
-                        item["telefone"],
-                        item["matricula"],
-                        item["curso"]
-                    )
+        self.__usuarios.remove(usuario)
 
-                else:
-                    continue  # ignora tipo desconhecido
-
-                lista.append(usuario)
-
-            return lista
-
-        except FileNotFoundError:
-            return []
-
-        except json.JSONDecodeError:
-            # Arquivo corrompido ou vazio
-            return []
-    
-    def __existe_matricula(self, matricula):
-        for usuario in self.__usuarios:
-            if usuario.getMatricula() == matricula:
-                return True
-        return False
+        self.__salvar()
