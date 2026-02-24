@@ -33,6 +33,7 @@ class PerfilInvalidoError(Exception):
 # =========================
 
 async def mudar_perfil(self, msg):
+
     page = msg.page
     perfil = self.value
 
@@ -56,6 +57,7 @@ async def concluir_cadastro(self, msg):
         confirmar = page.in_confirmar.value
         perfil = page.in_perfil.value
 
+
         # =========================
         # VALIDAÇÕES
         # =========================
@@ -78,6 +80,7 @@ async def concluir_cadastro(self, msg):
         if senha != confirmar:
             raise SenhaDivergenteError("As senhas não coincidem")
 
+
         # =========================
         # CRIAÇÃO DO OBJETO
         # =========================
@@ -89,14 +92,16 @@ async def concluir_cadastro(self, msg):
             if not curso:
                 raise CampoObrigatorioError("Curso é obrigatório")
 
+            # ✅ ORDEM CORRIGIDA AQUI
             usuario = Estudante(
                 nome,
                 email,
-                telefone,
                 senha,
+                telefone,
                 matricula,
                 curso
             )
+
 
         elif perfil == "Professor":
 
@@ -115,13 +120,16 @@ async def concluir_cadastro(self, msg):
             )
 
         else:
+
             raise PerfilInvalidoError("Perfil inválido")
+
 
         # =========================
         # SALVAR NO ARQUIVO
         # =========================
 
         gerenciador.inserir(usuario)
+
 
         # =========================
         # FEEDBACK SUCESSO
@@ -133,11 +141,13 @@ async def concluir_cadastro(self, msg):
 
         limpar_campos(page)
 
+
     except Exception as e:
 
         page.msg.text = str(e)
         page.msg.classes = "text-red-600 font-semibold mt-2"
         page.msg.show = True
+
 
     finally:
 
@@ -191,6 +201,7 @@ def pagina_cadastro():
         classes="text-2xl font-bold mb-6 text-center"
     )
 
+
     wp.in_nome = jp.Input(
         placeholder="Nome completo",
         a=container,
@@ -215,6 +226,7 @@ def pagina_cadastro():
         classes="w-full p-2 mb-3 border rounded"
     )
 
+
     # SENHAS
 
     row = jp.Div(
@@ -236,6 +248,7 @@ def pagina_cadastro():
         classes="p-2 border rounded"
     )
 
+
     # PERFIL
 
     wp.in_perfil = jp.Select(
@@ -248,6 +261,7 @@ def pagina_cadastro():
         wp.in_perfil.add(jp.Option(value=opt, text=opt))
 
     wp.in_perfil.value = "Selecione..."
+
 
     # CAMPOS DINÂMICOS
 
@@ -264,6 +278,7 @@ def pagina_cadastro():
         show=False,
         classes="w-full p-2 mb-3 border rounded bg-green-50"
     )
+
 
     # BOTÃO
 
@@ -282,6 +297,7 @@ def pagina_cadastro():
         """
     )
 
+
     # MENSAGEM
 
     wp.msg = jp.Div(
@@ -289,6 +305,7 @@ def pagina_cadastro():
         a=container,
         show=False
     )
+
 
     return wp
 
@@ -303,5 +320,7 @@ def iniciar():
 
 
 # Permite rodar diretamente
+
 if __name__ == "__main__":
+
     iniciar()
