@@ -12,42 +12,45 @@ class Cadastro:
         self.__arquivo = arquivo
         self.__usuarios = []
 
-        self.carregar()
+        self.__carregar()
 
 
     # =========================
     # GERAR MATRÍCULA AUTOMÁTICA
     # =========================
 
-    def gerar_matricula(self):
+    def __gerar_matricula(self):
 
-        if not self.__usuarios:
-            return "0001"
+        numero = 1
 
-        maior = max(
-            int(usuario.getMatricula())
-            for usuario in self.__usuarios
-            if usuario.getMatricula() is not None
-        )
+        if self.__usuarios:
 
-        nova = maior + 1
+            ultima = self.__usuarios[-1].getMatricula()
 
-        return str(nova).zfill(4)
+            if ultima and ultima.startswith("MAT"):
+
+                parte_numerica = ultima.replace("MAT", "")
+
+                if parte_numerica.isdigit():
+                    numero = int(parte_numerica) + 1
+
+        return f"MAT{numero:04d}"
 
 
     # =========================
-    # INSERIR
+    # INSERIR USUÁRIO
     # =========================
 
     def inserir(self, usuario):
 
-        matricula = self.gerar_matricula()
+        # gera matrícula automaticamente
+        matricula = self.__gerar_matricula()
 
         usuario.setMatricula(matricula)
 
         self.__usuarios.append(usuario)
 
-        self.salvar()
+        self.__salvar()
 
         return matricula
 
@@ -86,16 +89,20 @@ class Cadastro:
 
         self.__usuarios.remove(usuario)
 
-        self.salvar()
+        self.__salvar()
 
 
     # =========================
-    # SALVAR
+    # SALVAR JSON
     # =========================
 
-    def salvar(self):
+    def __salvar(self):
 
-        dados = [usuario.to_dict() for usuario in self.__usuarios]
+        dados = []
+
+        for usuario in self.__usuarios:
+
+            dados.append(usuario.to_dict())
 
         with open(self.__arquivo, "w", encoding="utf-8") as f:
 
@@ -103,43 +110,53 @@ class Cadastro:
 
 
     # =========================
-    # CARREGAR
+    # CARREGAR JSON
     # =========================
 
-    def carregar(self):
+    def __carregar(self):
 
         if not os.path.exists(self.__arquivo):
+
             return
 
         with open(self.__arquivo, "r", encoding="utf-8") as f:
 
-            dados = json.load(f)
+            try:
 
-        for d in dados:
+                dados = json.load(f)
 
-            if d["tipo"] == "Estudante":
+            except:
+
+                dados = []
+
+        for item in dados:
+
+            tipo = item.get("tipo")
+
+            if tipo == "Estudante":
 
                 usuario = Estudante(
-                    d["nome"],
-                    d["email"],
-                    d["senha"],
-                    d["telefone"],
-                    d["matricula"],
-                    d["curso"]
+                    item["nome"],
+                    item["email"],
+                    item["senha"],
+                    item["telefone"],
+                    item["matricula"],
+                    item["curso"]
                 )
 
-            elif d["tipo"] == "Professor":
+            elif tipo == "Professor":
 
                 usuario = Professor(
-                    d["nome"],
-                    d["email"],
-                    d["senha"],
-                    d["telefone"],
-                    d["matricula"],
-                    d["titulacao"]
+                    item["nome"],
+                    item["email"],
+                    item["senha"],
+                    item["telefone"],
+                    item["matricula"],
+                    item["titulacao"]
                 )
 
             else:
+
                 continue
 
             self.__usuarios.append(usuario)
