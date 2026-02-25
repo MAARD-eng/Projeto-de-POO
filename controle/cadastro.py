@@ -6,12 +6,9 @@ from modelo.professor import Professor
 
 
 class Cadastro:
-
     def __init__(self, arquivo):
-
         self.__arquivo = arquivo
         self.__usuarios = []
-
         self.__carregar()
 
 
@@ -21,20 +18,19 @@ class Cadastro:
 
     def __gerar_matricula(self):
 
-        numero = 1
+        numeros = []
 
-        if self.__usuarios:
+        for usuario in self.__usuarios:
+            mat = usuario.getMatricula()
 
-            ultima = self.__usuarios[-1].getMatricula()
+            if mat and mat.startswith("MAT"):
+                parte = mat.replace("MAT", "")
+                
+                if parte.isdigit():
+                    numeros.append(int(parte))
 
-            if ultima and ultima.startswith("MAT"):
-
-                parte_numerica = ultima.replace("MAT", "")
-
-                if parte_numerica.isdigit():
-                    numero = int(parte_numerica) + 1
-
-        return f"MAT{numero:04d}"
+        proximo = max(numeros, default=0) + 1
+        return f"MAT{proximo:04d}"
 
 
     # =========================
@@ -42,25 +38,22 @@ class Cadastro:
     # =========================
 
     def inserir(self, usuario):
+        if self.__email_existe(usuario.getEmail()):
+            raise ValueError("Já existe um usuário cadastrado com esse email.")
 
-        # gera matrícula automaticamente
         matricula = self.__gerar_matricula()
-
         usuario.setMatricula(matricula)
-
         self.__usuarios.append(usuario)
-
         self.__salvar()
-
         return matricula
-
+    
 
     # =========================
     # LISTAR
     # =========================
 
-    def listar(self):
 
+    def listar(self):
         return self.__usuarios
 
 
@@ -69,13 +62,9 @@ class Cadastro:
     # =========================
 
     def buscar(self, matricula):
-
         for usuario in self.__usuarios:
-
             if usuario.getMatricula() == matricula:
-
                 return usuario
-
         raise ValueError("Usuário não encontrado")
 
 
@@ -84,11 +73,8 @@ class Cadastro:
     # =========================
 
     def remover(self, matricula):
-
         usuario = self.buscar(matricula)
-
         self.__usuarios.remove(usuario)
-
         self.__salvar()
 
 
@@ -97,15 +83,10 @@ class Cadastro:
     # =========================
 
     def __salvar(self):
-
         dados = []
-
         for usuario in self.__usuarios:
-
             dados.append(usuario.to_dict())
-
         with open(self.__arquivo, "w", encoding="utf-8") as f:
-
             json.dump(dados, f, indent=4, ensure_ascii=False)
 
 
@@ -114,27 +95,18 @@ class Cadastro:
     # =========================
 
     def __carregar(self):
-
         if not os.path.exists(self.__arquivo):
-
             return
-
         with open(self.__arquivo, "r", encoding="utf-8") as f:
-
             try:
-
                 dados = json.load(f)
-
             except:
-
                 dados = []
 
         for item in dados:
-
             tipo = item.get("tipo")
 
             if tipo == "Estudante":
-
                 usuario = Estudante(
                     item["nome"],
                     item["email"],
@@ -145,7 +117,6 @@ class Cadastro:
                 )
 
             elif tipo == "Professor":
-
                 usuario = Professor(
                     item["nome"],
                     item["email"],
@@ -156,7 +127,12 @@ class Cadastro:
                 )
 
             else:
-
                 continue
 
             self.__usuarios.append(usuario)
+
+    def __email_existe(self, email):
+        for usuario in self.__usuarios:
+            if usuario.getEmail().lower() == email.lower():
+                return True
+        return False

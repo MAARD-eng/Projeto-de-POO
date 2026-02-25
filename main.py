@@ -1,8 +1,5 @@
-# main.py
-
 import justpy as jp
 from interface.cadastro_view import pagina_cadastro
-
 
 def main():
     print("Iniciando servidor web...")
