@@ -29,17 +29,6 @@ Tudo isso utilizando corretamente os conceitos de **POO**.
 
 ---
 
-## Conceitos de POO Utilizados
-
-- **Classes e Objetos**
-- **Encapsulamento** (atributos privados e getters/setters)
-- **Herança** (`Usuario` → `Professor` / `Estudante`)
-- **Polimorfismo** (`__str__()` e `to_dict()`)
-- **Separação de responsabilidades**
-- **Tratamento de exceções**
-
----
-
 ## Estrutura do Projeto
 
 ```text
